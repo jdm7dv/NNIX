@@ -1,0 +1,79 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{exercises}[2009/08/06 LaTeX version of exercise macros from the TeXbook]
+%%%%%%
+% Options: number within either the chapter or the part
+%          default is to number the exercises/answers via sections
+%%%%%%%%
+\newif\if@dump
+\@dumpfalse
+\newif\if@section
+\newif\if@ch@pter
+\newif\if@p@rt
+\@sectiontrue\@ch@pterfalse\@p@rtfalse
+\DeclareOption{chapter}{\@sectionfalse\@ch@ptertrue\@p@rtfalse}
+\DeclareOption{part}{\@sectionfalse\@ch@pterfalse\@p@rttrue}
+\DeclareOption{dump}{\@dumptrue}
+\ProcessOptions\relax
+
+\usepackage{manfnt}
+
+\if@section
+\newcounter{exercise}[section]
+\renewcommand{\theexercise}{\thesection.\arabic{exercise}}
+\else\if@ch@pter%
+\newcounter{exercise}[chapter]
+\renewcommand{\theexercise}{\thechapter.\arabic{exercise}}
+\else\if@p@rt%
+\newcounter{exercise}[part]
+\renewcommand{\theexercise}{\thepart.\arabic{exercise}}
+\else
+\newcounter{exercise}[section]
+\renewcommand{\theexercise}{\thesection.\arabic{exercise}}
+\fi\fi\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Exercise Environment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newcommand{\exercise}[1][\theexercise]{\refstepcounter{exercise}\medbreak%
+%  \noindent\llap{\mantriangleright\kern.15em}% triangle in margin
+%  \small{\textbf{EXERCISE #1}}\\%
+%  \noindent}
+\newenvironment{exercise}{\refstepcounter{exercise}\medbreak%
+  \noindent\llap{\mantriangleright\kern.15em}% triangle in margin
+  \small{\textbf{EXERCISE \theexercise}}\\%
+  \noindent}{}
+\newcommand{\dexercise}{\refstepcounter{exercise}\medbreak\upd@teCtr%
+  \noindent\llap{\mantriangleright\kern.15em}% triangle in margin
+  \small{\textbf{EXERCISE \theexercise}}\\%
+  \noindent}
+\newcommand{\dangerexercise}{\dbend \dexercise}
+\newcommand{\ddangerexercise}{\dbend\dbend \dexercise}
+
+% formatting macro
+\if@dump
+  \def\ansno#1:{\medbreak\noindent%
+    \hbox to\parindent{\bf\hss(Answer to #1)\enspace}\ignorespaces}
+\else
+  \def\ansno#1:{\medbreak\noindent%
+    \hbox to\parindent{\bf\hss #1.\enspace}\ignorespaces}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Answers Command
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\if@dump % if we are dumping the answers directly where they're placed
+  \def\ans{} % ans is defined as nothing
+  \newcommand{\answer}[1]{\par\medbreak % \answer simply
+      \ansno\theexercise: \\% prints directly
+      #1} % out when it's called 
+  \newcommand{\dumpanswers}{} % \dumpanswers is empty
+\else % else we are dumping it into a file
+  \newwrite\ans%
+  \immediate\openout\ans=answers % file for answers to exercises
+  \newcommand{\answer}[1]{\par\medbreak
+    \immediate\write\ans{}%
+    \immediate\write\ans{\string\ansno\theexercise:}%
+    \immediate\write\ans{ \detokenize{#1}}}
+  \newcommand{\dumpanswers}{\immediate\closeout\ans\input{answers}}
+\fi
+

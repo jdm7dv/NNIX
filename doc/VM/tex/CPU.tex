@@ -1,0 +1,90 @@
+%%
+%% CPU.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Wed Sep  9 13:11:35 2009 Alex Nelson
+%% Last update Wed Sep  9 13:11:35 2009 Alex Nelson
+%%
+
+Luckily, the architecture we have chosen is well
+documented~\cite{knuth2005art}. We will thus outline the basic
+algorithm for the CPU module of a simple emulator that goes step
+by step and performs one instruction per step. The basic design
+of the CPU is --- essentially --- an interpreter. 
+
+\noindent\textbf{Executing One Instruction.} Our virtual machine
+has one method for each opcode. So if we had four opcodes, {\tt
+  ADD}, {\tt SUB}, {\tt MUL}, {\tt DIV} (as most calculators have
+these operations) we would have four corresponding
+functions. Truth be told, using functions is really slow which
+can be bad.
+
+A better approach would be a two fold approach. When starting to
+program the virtual machine, we will use functions. When we have
+it fairly stable, we will \emph{add} conditional compilation to
+use functions when debugging and use macros when we're done
+debugging. This allows us to just copy/paste the code for the
+functions into the macros, more or less. Or if we're using {\tt
+  C99} we could use inline functions.
+
+\noindent\textbf{Execute Algorithm.} We have several variables
+which keep track of useful things. For example, the {\tt Program Counter}
+keeps track of the address for the current place in the program
+the CPU is reading from. The {\tt Interrupt Pointer} points to
+the address where the interrupt instructions are. We also have to
+keep track of the stack pointers for the call stack. If the
+reader is unfamiliar with the notion of a call stack, the reader
+is referred to Wikipedia.
+
+The basic algorithm for running the CPU amounts to an
+``almost-infinite'' loop that ends if a certain interrupt is
+requested. 
+
+We first consider a simple algorithm which gets the next byte in
+the program:
+
+\medskip\noindent\refstepcounter{algorithm}\textbf{Algorithm
+  \thealgorithm}~(\emph{Fetch a byte}). Given some address $a$
+(i.e. a pointer), return the byte at that address and set the
+address to point to the next contiguous byte.
+ 
+\begin{list}{\textbf{\Alph{algorithm}\arabic{myalgorithmstep}}.}{%
+  \usecounter{myalgorithmstep}\setlength{\topsep}{0pt}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
+\item {[Read byte.]} Set $b\gets$ \hyperref[alg:readMemory]{\Call{ReadMemory}{$a$}}
+\item {[Shift address.]} Set $a\gets a+1$. Return $b$ and
+  terminate the algorithm.\lastStep{}
+\end{list}\medskip
+
+We use this when considering the algorithm for the CPU's execution
+
+
+\summary (Execute an instruction). {This is the basic algorithm
+  the CPU uses.}
+\begin{myalgorithm}
+\item {[Fetch opcode.]}\label{step:execute:fetch} Fetch the next four bytes
+  $b_{1},\ldots,b_{4}$. Set $op\gets b_{1}$, $x\gets b_{2}$,
+  $y\gets b_{3}$, and $z\gets b_{4}$
+  (the instruction is set to this tetrabyte). 
+\item {[Decode opcode.]} If $op$ is a legal opcode, go
+  to step \ref{step:execute:execute}; if it's illegal, then set
+  $interrupt\gets illegal$ (interrupt for illegal opcode passed).
+\item {[Execute instruction.]}\label{step:execute:execute} Fetch the next three bytes $b_{1},b_{2},b_{3}$,
+  then set $x\gets b_{1}$, $y\gets b_{2}$, $z\gets b_{3}$. Set
+  $ticks\gets$ \Call{Opcode}{$x$, $y$, $z$} (execute the opcode
+  and set $ticks$ to be the number of ticks it takes to execute
+  the instruction).  
+\item {[If we don't quit, continue.]} If $interrupt$ does not
+  shut down the CPU, go to step \ref{step:execute:fetch}.
+\end{myalgorithm}
+
+
+\noindent\textbf{Multicore Processors.} Nowadays, the design of
+processors makes use of multiple cores on each CPU. This
+complicates things fantastically. We basically have to loop
+through each core (which implements all the functionality already
+mentioned), and call each core's {\sc Execute(\! )} procedure. We
+need to worry about some sort of L2 cache, and inter-core
+communication. For simplicity, we'll leave it as an exercise to
+the interested reader to sort these details out.

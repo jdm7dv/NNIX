@@ -1,0 +1,20 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{manalgorithms}[2009/08/06 Macros for algorithms]
+
+\def\summary (#1). #2 {\medskip\noindent\refstepcounter{myalgorithm}\textbf{Algorithm \Alph{myalgorithm}}~(\emph{#1}). #2}
+
+\newcommand{\lastStep}{\quad\rule[-2pt]{3pt}{8pt}}
+\newcounter{myalgorithm}[section]
+\newcounter{myalgorithmstep}
+\newenvironment{algorithm}{%
+\begin{list}{\textbf{\Alph{myalgorithm}\arabic{myalgorithmstep}}.}{%
+  \usecounter{myalgorithmstep}%
+  \setlength{\topsep}{0pt}%
+  \setlength{\itemsep}{1pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\parsep}{0pt}}}%
+{\lastStep{}\end{list}\medskip}
+
+
+
+

@@ -1,0 +1,65 @@
+%%
+%% VM.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Wed Sep  9 12:40:15 2009 Alex Nelson
+%% Last update Wed Sep  9 12:40:15 2009 Alex Nelson
+%%
+\documentclass{article}
+\usepackage{taocpmac}
+\usepackage{brackets}
+\usepackage{danger}
+\usepackage{algorithmicx,algpseudocode,algorithm}
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+\algrenewcommand{\algorithmiccomment}[1]{\hskip3pc (#1)}
+\numberwithin{algorithm}{section}
+\algnewcommand\default{\State\textbf{default:}~}
+\algnewcommand\case{\State\textbf{case}~}
+\algblockdefx[NAME]{Switch}{EndSwitch}[1]{\textbf{switch}(#1):}{\textbf{end switch}}
+\newcommand{\lastStep}{\quad\rule[-2pt]{3pt}{8pt}}
+\newcounter{myalgorithmstep}
+\renewcommand{\thealgorithm}{\textbf{\Alph{algorithm}}}
+
+\def\summary (#1). #2 {\medskip\noindent\refstepcounter{algorithm}\textbf{Algorithm \Alph{algorithm}}~(\emph{#1}). #2}
+
+\newenvironment{myalgorithm}{%
+\begin{list}{\textbf{\Alph{algorithm}\arabic{myalgorithmstep}}.}{%
+  \usecounter{myalgorithmstep}%
+  \setlength{\topsep}{0pt}%
+  \setlength{\itemsep}{1pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\parsep}{0pt}}}%
+{\lastStep{}\end{list}\medskip}
+
+
+\title{Notes on an {\tt MMIX} Virtual Machine}
+\date{September 09, 2009}
+\author{Alex Nelson}
+\begin{document}
+\maketitle
+
+\section{The Basic Idea}
+
+The basic idea is to have some sort of model of the computer. We
+have in the computer basically three components:
+\begin{enumerate}
+\item the CPU;
+\item the memory;
+\item the peripherals (i.e. the various input/output devices).
+\end{enumerate}
+We will try to consider the basic design of these three
+components.
+
+\section{The CPU}
+\input{tex/CPU}
+
+\section{The Memory Module}
+\input{tex/memory}
+
+
+\bibliographystyle{utcaps}
+\bibliography{VM}
+\end{document}

@@ -1,0 +1,48 @@
+%%
+%% intro.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Fri Sep  4 22:41:31 2009 Alex Nelson
+%% Last update Fri Sep  4 22:41:31 2009 Alex Nelson
+%%
+
+This is an introduction to the notion of a file system in a Unix
+like operating system. We'll try to set up the motivation for the
+file system and then perform a case study on {\tt xv6} -- a
+modern implementation of Sixth Edition Unix in ANSI C for the x86
+architecture (i.e. 32 bit Intel/AMD type processors). It is
+currently in its second revision~\cite{xv6}.
+
+The file system is the heart and soul of the Unix-like operating
+system. Everything ``is-a'' file, after all. We will take care in
+motivating the existence of the file system with several
+problems.
+
+We will then walk through the basic idea of what the file system
+does. More precisely, we will discuss its algorithms and data
+structures, and try to limit our concern to the file system. For
+the time being we will not delve too deeply into any other part
+of the operating system. 
+
+The second part of this introductory text will be a case study of
+the {\tt xv6} file system, specifically in relation to the fairly
+generic algorithms and data structures we considered in the first
+part of this paper.
+
+\proclaim Remark. {We will name the algorithms via the English
+equivalent of the names used for the functions in the {\tt XV6}
+source code. So instead of {\tt bget()} (or the ancient
+equivalent {\tt getblk()}) we will consider {\sc
+GetBlock()}. Also we will make algorithm names used as a step in
+an algorithm a link. Consider \hyperref[alg:writeBlock()]{\sc
+WriteBlock()} line 5 as an example.}
+
+%% {\medbreak
+%%   \noindent{\bf Remark.\enspace}{We will name the algorithms via
+%%   the names used in {\tt xv6}. So instead of the ancient Unix's
+%%   {\tt getblk()} algorithm, we'll consider {\tt bget()}, etc. As
+%%   one expects, the algorithms aren't all that different, but the
+%%   names are. \par}%
+%%   \ifdim\lastskip<\medskipamount \removelastskip\penalty55\medskip\fi

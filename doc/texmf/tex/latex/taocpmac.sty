@@ -1,0 +1,143 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{taocpmac}[2009/08/06 Macros for manual]
+
+\usepackage[usenames]{color}	    % For creating coloured text and background
+\definecolor{ForestGreen}{rgb}{0.133333,0.545098,0.133333}
+\usepackage[final,colorlinks=true, 
+            hyperindex=true,
+            citecolor=ForestGreen,
+            filecolor=black,
+            menucolor=black,
+%            linkcolor=black,
+%            urlcolor=black,
+            bookmarksopen=true]{hyperref}
+
+% the following is the TeXbook's exact specifications
+%\usepackage[textheight=38pc,headsep=10pc,top=16pc,textwidth=30pc,inner=6pc,marginparwidth=8pc,marginparsep=1cm]{geometry}
+% the following is TAOCP's exact specifications
+\usepackage[top=8pc,headsep=1pc,textwidth=29pc]{geometry}
+\usepackage{amsmath,amsfonts,amscd}
+\usepackage{amssymb}
+\usepackage{float}			% advanced float environment
+\usepackage{framed}			% for boxed text sections
+\usepackage{ifpdf}
+\usepackage{graphics}			% Packages to allow inclusion of graphics
+\usepackage[final]{graphicx}
+\ifpdf
+\DeclareGraphicsRule{*}{mps}{*}{}	% for metapost graphics in pdflatex
+\fi
+\usepackage{comment}			% for the comment environment
+\usepackage{marginnote}			% a better margin note system
+\usepackage{manfnt}			% for the dangerous bend symbols
+\usepackage{fancyvrb}			% for the code environment
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We customize our style...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\normalbaselineskip=12pt
+\baselineskip=12pt
+\abovedisplayskip=6pt plus 3pt minus 1pt
+\belowdisplayskip=6pt plus 3pt minus 1pt
+\abovedisplayshortskip=0pt plus 3pt
+\belowdisplayshortskip=4pt plus 3pt
+\setlength{\parindent}{19pt}
+\setlength\evensidemargin{5.07312pc}
+\setlength\oddsidemargin{4.07312pc}
+
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {2.3ex \@plus.2ex}%
+                                   {\normalfont\large\bfseries}}
+\renewcommand\subsection{\@startsection {subsection}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {2.3ex \@plus.2ex}%
+                                   {\normalfont\large\bfseries}}
+\renewcommand\subsubsection{\@startsection {subsubsection}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {2.3ex \@plus.2ex}%
+                                   {\normalfont\large\bfseries}}
+
+
+
+\usepackage{fancyhdr,ifthen}
+\pagestyle{fancy}
+%\if@twoside
+\newcommand{\mymarks}{
+  \ifthenelse{\equal{\leftmark}{\rightmark}}
+	{\rightmark}
+	{\rightmark--\leftmark}}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\newcommand{\theleftmarks}{%
+  \ifodd\value{page}%
+    \thesubsection%
+  \else%
+    \thepage\qquad\quad\small{\MakeUppercase\leftmark}%
+  \fi}
+\newcommand{\therightmarks}{%
+  \ifodd\value{page}%
+    \small{\MakeUppercase\leftmark}\qquad\quad\thepage%
+  \else%
+    \thesubsection%
+  \fi}
+\fancyhead{}
+\fancyhead[L]{\theleftmarks}
+\fancyhead[R]{\therightmarks}
+\cfoot{}
+\renewcommand{\headrulewidth}{0pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We also customize commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\re}{\mathop{\rm Re}}
+\newcommand{\im}{\mathop{\rm Im}}
+\newcommand{\tr}{\mathop{\rm Tr}}
+\renewcommand{\ker}{\mathop{\rm Ker}}
+\newcommand{\coker}{\mathop{\rm Coker}}
+\newcommand{\erfi}{\mathop{\rm erfi}}
+\newcommand{\erf}{\mathop{\rm erf}}
+\newcommand{\<}{\langle}
+\renewcommand{\>}{\rangle}
+\newcommand{\iso}{\cong}
+\newcommand{\equalsdef}{\stackrel{\text{def}}{=}}
+\newcommand{\eqdef}{\stackrel{\text{def}}{=}}
+\newcommand{\define}[1] {\textbf{#1}\index{#1}}
+\newcommand{\cov}[2]{{#1}_{#2}}
+\newcommand{\contrav}[2]{{#1}^{#2}}
+\newcommand{\hex}[1]{\text{\tt\##1}}
+\newcommand{\mmix}{\text{\tt MMIX}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We also make the marin notes look prettier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\if@twoside
+\renewcommand\marginpar[1]{\-\marginnote{\footnotesize{\emph{#1}}}}
+\else
+\renewcommand\marginpar[1]{\marginnote{\raggedright\footnotesize{\emph{#1}}}}%
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This macro header is what controls the ``dangerous bend'' paragraph
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\font\manual=manfnt
+\def\dbend{{\manual\char127}} % dangerous bend sign
+
+% Danger, Will Robinson!
+\def\danger{\begin{trivlist}\begin{footnotesize}\item[]\noindent%
+\begingroup\hangindent=3pc\hangafter=-2%\clubpenalty=10000%
+\def\par{\endgraf\endgroup}%
+\hbox to0pt{\hskip-\hangindent\dbend\hfill}\ignorespaces}
+\def\enddanger{\par\end{footnotesize}\end{trivlist}}
+
+% Danger! Danger!
+\def\ddanger{\begin{trivlist}\begin{footnotesize}\item[]\noindent%
+\begingroup\hangindent=3pc\hangafter=-2%\clubpenalty=10000%
+\def\par{\endgraf\endgroup}%
+\hbox to0pt{\hskip-\hangindent\dbend\kern2pt\dbend\hfill}\ignorespaces}
+\def\endddanger{\par\end{footnotesize}\end{trivlist}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% These macros are responsible for the code segments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DefineVerbatimEnvironment{commandLine}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{code}{Verbatim}{numbersep=3pt,fontsize=\footnotesize,frame=lines}

@@ -1,0 +1,119 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{fly}[2009/08/06 Customizations to make the style superfly]
+\usepackage[final]{hyperref}
+\hypersetup{
+    colorlinks,%
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,%
+    urlcolor=black
+}
+% automatically generate the author information
+\expandafter\ifx\csname amsart.sty\endcsname\relax
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\author{Alex Nelson\footnote{\texttt{Email: \href{mailto:pqnelson@gmail.com}{pqnelson@gmail.com}}}}%~\footnote{This is a page from \url{http://code.google.com/p/notebk/}}}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\else
+\author{Alex Nelson}
+\email{pqnelson@gmail.com}
+\fi
+
+% the following is the TeXbook's exact specifications
+%\usepackage[textheight=38pc,headsep=10pc,top=16pc,textwidth=30pc,inner=6pc,marginparwidth=8pc,marginparsep=1cm]{geometry}
+% the following is OUR preferred specifications!
+\usepackage[top=6pc,textwidth=30pc,inner=6pc,%
+marginparwidth=10pc,marginparsep=1cm]{geometry}
+\usepackage{amsmath,amsfonts,amsthm,amscd,amssymb}
+\usepackage{epic,eepic}
+\usepackage{float}
+\usepackage{framed}
+\usepackage{ifpdf}
+\usepackage[final]{graphicx}
+\ifpdf
+\DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+\usepackage{mathrsfs}
+\usepackage{comment}
+\usepackage[colorinlistoftodos, shadow]{todonotes}
+\usepackage{slashed}
+\usepackage{paralist}
+\usepackage[T1]{fontenc}
+\usepackage{marginnote}
+\usepackage{bbm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We customize theorem styles...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+\newtheorem{thm}[defn]{Theorem}
+\newtheorem{rmk}[defn]{Remark}
+\newtheorem{lem}[defn]{Lemma}
+\newtheorem{cor}[defn]{Corollary}
+\newtheorem{ex}[defn]{Example}
+\newtheorem{nonex}[defn]{NON-Example}
+\newtheorem{prop}[defn]{Proposition}
+\newtheorem{sch}[defn]{Scholium}
+\newtheorem{axm}[defn]{Axiom}
+\newtheorem{prob}[defn]{Problem}
+\newtheorem*{bessel}{Bessel Inequality}
+\newtheorem*{assume}{Assumption}
+\newtheorem*{parseval}{Parseval Equality}
+\newtheorem*{riemleb}{Riemann-Lebesgue Theorem}
+\newtheorem*{invFourier}{Fourier Inversion Theorem}
+\newtheorem*{plancherel}{Plancherel Theorem}
+\newtheorem*{samplingthm}{Sampling Theorem}
+\theoremstyle{remark}
+\newtheorem*{sketch}{Sketch Of Proof}
+\allowdisplaybreaks
+
+
+\normalbaselineskip=12pt
+\baselineskip=12pt
+\abovedisplayskip=6pt plus 3pt minus 1pt
+\belowdisplayskip=6pt plus 3pt minus 1pt
+\abovedisplayshortskip=0pt plus 3pt
+\belowdisplayshortskip=4pt plus 3pt
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\if@twoside
+\fancyhead[LE,RO]{\thepage}
+\fancyheadoffset[OR,EL]{8pc}
+\else
+\fancyhead[L]{\S\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\fancyheadoffset[R]{8pc}
+\fi
+\cfoot{}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We also customize commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\re}{\mathop{\rm Re}}
+\newcommand{\im}{\mathop{\rm Im}}
+\newcommand{\tr}{\mathop{\rm Tr}}
+\newcommand{\aut}{\mathop{\rm Aut}}
+\renewcommand{\ker}{\mathop{\rm Ker}}
+\newcommand{\coker}{\mathop{\rm Coker}}
+\newcommand{\erfi}{\mathop{\rm erfi}}
+\newcommand{\erf}{\mathop{\rm erf}}
+\newcommand{\<}{\langle}
+\renewcommand{\>}{\rangle}
+\newcommand{\iso}{\cong}
+\newcommand{\equalsdef}{\stackrel{\text{def}}{=}}
+\newcommand{\eqdef}{\stackrel{\text{def}}{=}}
+\newcommand{\define}[1] {\textbf{#1}\index{#1}}
+\newcommand{\cov}[2]{{#1}_{#2}}
+\newcommand{\contrav}[2]{{#1}^{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We also make the marin notes look prettier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\setlength{\marginparwidth}{1.2in}
+
+\if@twoside
+\renewcommand\marginpar[1]{\-\marginnote{\footnotesize{\emph{#1}}}}
+\else
+\renewcommand\marginpar[1]{\-\marginnote{\raggedright\footnotesize{\emph{#1}}}}%
+\fi

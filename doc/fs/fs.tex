@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{manmac,brackets,manalgorithms}
+
+\newcommand{\courier}[1]{{\fontfamily{pcr}\fontseries{m}\fontshape{n}\selectfont #1}}
+\outer\def\proclaim #1. #2\par{\medbreak
+  \noindent{\bf#1.\enspace}{\sl#2\par}%
+  \ifdim\lastskip<\medskipamount \removelastskip\penalty55\medskip\fi}
+
+\let\oldindex\index
+\def\index#1{\oldindex{#1}\marginpar{#1}}
+\renewcommand{\define}[1]{\emph{#1}\index{#1}}
+
+\hypersetup{pdftitle={Notes on the File System in Unix},
+            pdfauthor={Alex Nelson},
+            pdfcreator={Alex Nelson},
+            pdfsubject={File Systems},
+            unicode={true}}
+
+%\numberwithin{algorithm}{section}
+\title{Notes on the File System in Unix}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\author{Alex Nelson\footnote{Email \href{mailto:pqnelson@gmail.com}{\tt pqnelson@gmail.com}}~\footnote{Taken from \url{http://code.google.com/p/notebk/}}}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\date{26 August 2009}
+\begin{document}
+\maketitle
+\tableofcontents
+%\listofalgorithms
+\pagebreak
+\section{Introduction}
+\input{tex/intro}
+
+\section{Motivating Problem}
+\input{tex/problem}
+
+\section{Block Cache}
+\input{tex/block}
+
+%\section{File Hierarchy}
+%\input{tex/hierarchy}
+\appendix
+\section{Algorithms Syntax}
+\input{tex/algorithmsAppendix}
+
+\nocite{*}
+\bibliographystyle{utcaps}
+\bibliography{fs}
+\end{document}

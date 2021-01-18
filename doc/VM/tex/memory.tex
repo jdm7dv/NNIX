@@ -1,0 +1,49 @@
+%%
+%% memory.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Wed Sep  9 13:12:12 2009 Alex Nelson
+%% Last update Wed Sep  9 13:12:12 2009 Alex Nelson
+%%
+
+The memory module is responsible for the memory. Sometimes this
+is done via a memory management unit (which is responsible for
+handling memory accesses to memory requested by the CPU). The
+easiest way to implement memory is to have an array of plain
+bytes and manipulate it in the obvious way, i.e.
+\begin{Verbatim}
+Data = Memory[Address]; /* read data from address */
+Memory[Address] = Data; /* write data to address */
+\end{Verbatim}
+\noindent which is not always the best solution. The better
+solution would be to have a {\sc WriteMemory()} and {\sc ReadMemory()} methods.
+But here we need to be extra careful, as such methods are likely
+to be called often. We will recall the Unix philosophy and make a
+clean implementation of such methods \emph{prior} to trying to
+optimize them. We have
+
+\begin{algorithm}[H]
+\caption{The basic algorithms dealing with memory.}
+\begin{algorithmic}[1]
+\Procedure{ReadMemory}{Address $a$}\label{alg:readMemory}
+\State \Return data in memory at $a$
+\EndProcedure
+\Statex
+\Procedure{WriteMemory}{Address $a$, Byte $b$}\label{alg:writeMemory}
+\State {\tt Memory[}$a${\tt]}$\gets b$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\noindent\textbf{Random Access Memory.} This is the fast,
+temporary area of memory (data is lost when power is lost) that
+is directly linked to the CPU, used to store instructions and
+data. This would probably become a table of bytes, for quick and
+easy access. If the system has e.g. 64 kilobytes of RAM, the
+memory area could be declared as
+\begin{Verbatim}
+ubyte RAM[0x10000];
+\end{Verbatim}
+\noindent and accessed through the usual array methods.

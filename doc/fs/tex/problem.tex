@@ -1,0 +1,153 @@
+%%
+%% problem.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Fri Sep  4 17:17:47 2009 Alex Nelson
+%% Last update Fri Sep  4 17:17:47 2009 Alex Nelson
+%%
+
+Consider the following problems:
+
+\proclaim Problem. {We want to keep information after we shut
+  down the computer, and recover it when we turn it back on.}
+
+\proclaim Problem. {We have the hard drive, which is basically a
+  form of memory (that is, a large but finite collection of
+  bits), we would like to organize the information written to the
+  hard drive ``somehow''. More generally, we want some sort of
+  interface between the user and the hard disk.}
+
+We want to solve both of these problems at once, in one fell
+swoop.
+
+\subsection{A Note on Terminology}
+
+\marginpar{table = array}Note that the term ``table'' is used often in this text, and
+should be interpreted as ``array'' in the context of languages in
+the C family.
+
+\section{Basic Ideas of the File System}
+
+We organize information written to the hard drive in the form of
+some data structure which is typically called a ``file''. The internal
+representation of a file is a data structure is really, for unix
+like systems, an \define{inode}. The term ``inode'' is a
+contraction of the term ``\define{index node}'' and is commonly
+used in most Unix-like operating systems\footnote{Most virtual
+  file systems use the phrase as well.}. Every file has one inode
+(it lives in one place on the hard drive), but it can be given several
+different paths which point to that one single quantum of hard
+disk space. These sort of pointers are called a ``\define{(symbolic) link}''.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics{img/img.0}
+\vspace{-1.5pc}
+\end{center}
+\caption{The relationship between the file descriptor table, the
+  file table, and the inode table.}\label{fig:img0}
+\end{figure}
+
+When a program (e.g. the user through a shell command, or some
+other program) refers to the full path, the kernel parses the
+file name one component at a time, checks that the process has
+permission to search the directories in the path, and eventually
+retrieves the inode for the file. E.g. the line of code a process
+calls
+\begin{Verbatim}
+    open("/usr/local/bin/foobar",1);
+\end{Verbatim}
+the kernel retrieves the inode for
+\verb|"/usr/local/bin/foobar"|. It first looks in {\tt/} --- the
+root directory --- for the directory {\tt usr}. If the user has
+the right permissions, the kernel looks in {\tt/usr/} for the
+{\tt local} directory, and so on until it either can't go further
+due to a lack of permissions or it finds {\tt foobar}.
+
+When a process creates a new file, the kernel assigns an unused
+inode to the file. Inodes are stored in the file system, but the
+kernel reads them into an inode table in-RAM when manipulating
+the files.
+
+There are two other data structures worthy of note, namely the
+\emph{file table} and the \emph{user file descriptor table}
+\marginpar{file table, and user file descriptor table}. The file
+table is a global variable for the kernel. However, the user file
+descriptor table is allocated \emph{per process}. Entries in the
+three structures (the user file descriptor table, the file table,
+and the inode table) maintain the state of the file and the
+process' access to it. The file table keeps track of the offset
+byte in the file where the process' next {\tt read()} or {\tt
+  write()} will start. It is also responsible for the permissions
+for {\tt open()}-ing the file. So to sum up, the file table:
+\begin{enumerate}
+\item is responsible for permissions;
+\item keeps track of the offset byte, where a process will {\tt read()} from or {\tt write()} to next.
+\end{enumerate}
+
+The user file descriptor table identifies all open files for a
+process. (The user file descriptor data structure is a glorified
+pointer to an entry in the file table really.) If one has
+experience with programming file input/output in C, the {\tt
+  FILE*} pointer returned by {\tt fopen()} is precisely a file
+descriptor. The file descriptor is used for {\tt read()} and {\tt
+  write()} system calls. The operating system uses the file
+descriptor to access the user file descriptor table, which points
+to the file table which then points to the inode table. From
+there it finds data in the file.
+
+We can turn our attention now to the hard disk. For simplicity we
+won't worry about using solid state drives, or USB disks or
+anything of the sort. A disk is divided up into several
+\define{partitions}, which makes it easier to deal with the
+disk. At a higher level of abstraction, the kernel treats each
+partition as a ``\define{logical device}'' identified by a
+``\define{device number}''. The conversion between the logical
+device (file system) addresses and physical device (disk)
+addresses is performed by the disk driver.
+
+A file system typically consists of a sequence of logical blocks
+(each containing 512, 1024, 2048, or more generally $(2^{n})512$
+bytes, depending on the implementation). Within a file system,
+all blocks are the same size. But be warned this is a system
+dependent size. The block size on your system may be different
+than the block size on mine. The conventional wisdom is that
+using large logical blocks increase the effective data transfer
+rate between disk and memory (because the kernel can transfer
+more data per disk operation, so fewer operations are needed).
+Consider the situation when one wants to read in 1024
+bytes from a disk in one {\tt read()} operation is faster than
+reading 512 bytes twice. One may be tempted, therefore, to use as
+large a block size as possible, but this temptation should be
+resisted! If the block size is too large, the effective storage
+capacity may drop.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics{img/img.1}
+\vspace{-1.5pc}
+\end{center}
+\caption{Structure of a disk in terms of blocks}\label{fig:img1}
+\vspace{-0.875pc}
+\end{figure}
+
+As far as blocks are concerned, a generic file system has the
+following structure:
+\begin{enumerate}
+\item The \textbf{boot block}\index{boot block} occupies the
+  beginning of the file system, and its usually the first
+  sector. Its main task is to boot (initialize) the operating
+  system. Every file system has a boot block, although it may be
+  empty.
+\item The \textbf{Super block}\index{super block} describes the
+  state of the file system --- viz. how large it is, how many
+  files it can store, where to find the free space on the file
+  system, and so on.
+\item The \textbf{Inode List}\index{inode list} is a list of
+  inodes that follows the super block in the file system.
+\item The rest of the disk is the \textbf{Data Blocks}\index{Data Blocks}
+  which consists of the data of the file. Each data block belongs
+  to exactly one file in the file system.
+\end{enumerate}

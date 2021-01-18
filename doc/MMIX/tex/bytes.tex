@@ -1,0 +1,63 @@
+%%
+%% bytes.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Sat Sep  5 17:02:37 2009 Alex Nelson
+%% Last update Sat Sep  5 17:02:37 2009 Alex Nelson
+%%
+
+{\tt MMIX} works with bits, like most processor architectures. It
+usually deals with 64 bits at a time. We group these 64 bits into
+16 hexadecimal numbers, they are
+\begin{equation}%\label{eq:}
+\begin{array}{llll}
+\text{{\tt{0}}}=0000,&\text{{\tt{4}}}=0100,&\text{{\tt{8}}}=1000,&\text{{\tt{c}}}=1100\\
+\text{{\tt{1}}}=0001,&\text{{\tt{5}}}=0101,&\text{{\tt{9}}}=1001,&\text{{\tt{d}}}=1101\\
+\text{{\tt{2}}}=0010,&\text{{\tt{6}}}=0110,&\text{{\tt{a}}}=1010,&\text{{\tt{e}}}=1110\\
+\text{{\tt{3}}}=0011,&\text{{\tt{7}}}=0111,&\text{{\tt{b}}}=1011,&\text{{\tt{f}}}=1111
+\end{array}
+\end{equation}
+We will use the C style method of writing {\tt 0xfa} for
+hexadecimal numbers. We won't distinguish between uppercase or
+lowercase letters.
+
+Remember that a \emph{byte} is 8 bits, but since 4 bits is the
+same as one hexadecimal number, a byte is 2 hexadecimal digits.
+
+Characters in the English language are represented with one byte
+per character, using the American Standard Code for Information
+Interchange (ASCII). That's the same as 2 hexadecimal digits.
+We have the following table
+\begin{equation}%\label{eq:}
+\begin{array}{llll}
+\texttt{0x41}=A,&\texttt{0x42}=B,&\texttt{0x43}=C,&\texttt{0x44}=D,\\
+\texttt{0x45}=E,&\texttt{0x46}=F,&\texttt{0x47}=G,&\texttt{0x48}=H,\\
+\texttt{0x49}=I,&\texttt{0x4A}=J,&\texttt{0x4B}=K,&\texttt{0x4C}=L,\\
+\texttt{0x4D}=M,&\texttt{0x4E}=N,&\texttt{0x4F}=O,&\texttt{0x50}=P,\\
+\texttt{0x51}=Q,&\texttt{0x52}=R,&\texttt{0x53}=S,&\texttt{0x54}=T,\\
+\texttt{0x55}=U,&\texttt{0x56}=V,&\texttt{0x57}=W,&\texttt{0x58}=X,\\
+\texttt{0x59}=Y,&\texttt{0x5A}=Z.&&\\
+\end{array}
+\end{equation}
+For lower case letters, simply add \texttt{0x20} to the
+character.
+
+It turns out that the rest of the world doesn't necessarily use
+the letters America does. For this reason, a 16 bit code become
+standard. This is known as Unicode (or ISO/IEC 10646 UCS-2). It
+has four hexadecimal digits instead of two for every letter. We
+won't worry about the character table here since there are
+thousands of characters supported by unicode. It has everything
+short of Klingon. 
+
+There are also all sorts of wacky units of information that
+should be noted. For example
+\begin{align*}
+\text{2 bytes} &= \text{1 wyde} = {16}\text{ bits};\\
+\text{2 wydes} &= \text{1 tetra} = {32}\text{ bits};\\
+\text{2 tetras} &= \text{1 octa} = {64}\text{ bits};
+\end{align*}
+Note that one tetrabytes is four bytes, and one octabyte is eight
+bytes. 

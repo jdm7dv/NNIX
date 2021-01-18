@@ -1,0 +1,71 @@
+%%
+%% algorthimsAppendix.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Sat Sep  5 13:39:10 2009 Alex Nelson
+%% Last update Sat Sep  5 13:39:10 2009 Alex Nelson
+%%
+
+The algorithms notation can be a little daunting at first. The
+symbols look familiar, its like an Ancient Roman trying to
+read Italian --- the words are familiar, but the ordering is
+baffling. We will set the standard for algorithm syntax here.
+
+\summary (Euclid's Algorithm). {Euclid's algorithm to find the greatest common 
+divisor of two positive integers $m$ and $n$. That is, it returns the
+largest integer that divides both $m$ and $n$. \label{alg:euclidAlgorithm}}
+\begin{algorithm}
+\item {[Find Remainder]} Divide $m$ by $n$ and let $r$ be the
+remainder (so we have $0\leq r<n$.)
+\item {[Is it zero?]} If $r=0$, the algorithm terminates and $n$ is
+the answer.
+\item {[Reduce]} Set $m\gets n$, $n\gets r$, and go back to step
+1. \label{step:reduceEuclid}
+\end{algorithm}
+\noindent\marginpar{Each step of the algorithm consists of:\\ (1) summary in brackets;}\noindent Each step of the algorithm begins with square brackets
+which summarizes as briefly as possible what the step does. We
+can put the algorithm in the form of a flow chart, using the
+bracketed phrase as the label of the nodes of the flow chart.
+
+\marginpar{(2) a description of some action to be performed;}After
+the summarizing phrase comes a description in words and symbols
+of some \emph{action} to be performed or some decision to be
+made. Any comments made are included as an explanation of that
+step, often indicating certain ``invariant characteristics'' of
+the variables or the current goals at that step.
+
+\marginpar{(3) $a\gets b$ assigns value of $b$ to variable $a$; and}Now
+the arrow $\gets$ in step \ref{step:reduceEuclid}
+is the important \emph{replacement operation}, sometimes
+called \emph{assignment} or \emph{substitution}: so $``a\gets
+b\,$'' means that the value of the variable $m$ is to be replaced
+by the current value of variable $n$. An arrow has different
+meaning than equality: we will not say ``Set $m=n\,$'' but
+perhaps ask ``Does $m=n$?'' The ``='' sign denotes a condition
+that can be tested, the ``$\gets\,$'' sign denotes an action that
+can be performed. In general, ``variable $\gets$ formula'' means
+that the formula is to be computed using the present values of
+any variables appearing within it; then the result should replace
+the (previous) value of the variable on the left hand side. 
+
+Order matters with the assignment operator. So ``Set $m\gets n$,
+$n\gets r\,$'' is quite different from ``Set $n\gets r$, $m\gets
+n\,$''. The latter sets $m$ to the current value of $n$, which is
+$r$. The former sets $m$ to the current value of $n$, and $n$ has
+its value be replaced by $r$.
+
+\marginpar{(4) Heavy verticle bar \rule[-2pt]{3pt}{8pt} indicates end of algorithm.}%
+The heavy vertical line ``\,\rule[-2pt]{3pt}{8pt}\,'' appearing at the end of
+step \ref{step:reduceEuclid} is
+used to indicate the end of an algorithm and the resumption of
+the text.
+
+One minor confusing point of notation. If we have a procedure
+defined, say {\sc Foo}, it will be denoted by small capital
+letters. It will be called by the notation {\sc Foo()}, having
+the open and close parentheses after the method name. If the
+procedure takes in arguments, they are listed in between the
+parentheses. \textbf{They are not a comment!} If the procedure's
+algorithm has been defined elsewhere, it will be in red.

@@ -1,0 +1,117 @@
+%%
+%% block.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Fri Sep  4 23:46:06 2009 Alex Nelson
+%% Last update Fri Sep  4 23:46:06 2009 Alex Nelson
+%%
+% the buffer cache is dealt with mostly in /xv6/bio.c
+
+Recall the second problem we were considering as motivation for
+studying the file system was:
+
+\proclaim Problem. {We have the hard drive, which is basically a
+  form of memory (that is, a large but finite collection of
+  bits), we would like to organize the information written to the
+  hard drive ``somehow''. More generally, we want some sort of
+  interface between the user and the hard disk.}
+
+\noindent\ignorespaces We would like to consider how to organize
+information on mediums like a disk. The basic idea is that when
+a process wants some information from a disk, the kernel loads
+the data into RAM where the process can examine it, alter it, and
+then request the modified data be saved to the disk.
+
+\summary (Get Block). {Look through buffer cache for block on a given device.\label{alg:getBlock()}}
+\begin{algorithm}
+\item {[If block in RAM]} If the block we are looking for is in RAM, then continue with the algorithm on to step \ref{step:getBlock:waitTilFree}. Otherwise, it's not in RAM, and we need to load it in RAM, so we go to step \ref{step:getBlock:blockNotInRAM}.
+\item\label{step:getBlock:waitTilFree} {[Wait until it's free.]} If the block is marked as busy, sleep until it's free. When it's free go on to step \ref{step:getBlock:markAsBusy}.
+\item\label{step:getBlock:markAsBusy} {[Mark as busy, end here.]} We mark the block as busy, then return it. This terminates the algorithm.
+\item\label{step:getBlock:blockNotInRAM} {[Block not in RAM.]} 
+\item {[]}
+\end{algorithm}
+
+\begin{comment}
+\begin{algorithm}
+\summary (\emph{Get Block}). Look through buffer cache for block on a given device\label{alg:getBlock()}
+\Require file system number ~fn
+\Require block number ~bn
+\Ensure locked buffer that can now be used for block
+\Statex
+\Procedure{GetBlock}{fn, bn}
+\While{buffer not found}
+\If{block in hash queue}
+  \If{buffer busy}
+    \State sleep until buffer beccomes free (then continue to the while loop)
+  \EndIf
+  \State mark buffer busy
+  \State remove buffer from free list
+  \State \Return buffer
+  \Else \Comment{block not on hash queue}
+    \If{there are no buffers on free list}
+      \State sleep until any buffer becomes free (then continue to while loop)
+    \EndIf
+    \State remove buffer from free list
+    \If{buffer marked for delayed write}
+      \State asynchronous write buffer to disk (then continue to the while loop)
+    \EndIf
+    \State remove buffer from old hash queue
+    \State put buffer onto new hash queue
+    \State \Return buffer
+  \EndIf
+\EndWhile
+\EndProcedure\lastStep
+\end{algorithm}
+       
+\label{alg:releaseBlock()}    
+\begin{algorithm}
+\summary (\emph{Release Block}). Release the block buffer    
+\Require locked buffer
+\Ensure none.
+\Statex
+\Procedure{ReleaseBlock}{b}
+\If{buffer contents valid \textbf{and} buffer not old}
+\State enqueue buffer at the end of the free list
+\Else
+\State enqueue buffer at beginning of free list
+\EndIf
+\State lower processor execution level to allow interrupts
+\State \Call{Unlock}{buffer}
+\EndProcedure\lastStep
+\end{algorithm}
+
+\begin{algorithm}
+\summary (\emph{Read Block}). Reads the block buffer \label{alg:readBlock()}
+\Require file system block number bn
+\Ensure buffer containing data
+\Statex
+\Procedure{ReadBlock}{b}
+\State \hyperref[alg:getBlock()]{\Call{GetBlock}{file system number, bn}}
+\If{buffer contents valid}
+\State \Return buffer
+\EndIf
+\State initiate disk read
+\State \Call{Sleep}{until disk read complete}
+\State \Return buffer
+\EndProcedure\lastStep
+\end{algorithm}
+
+
+\begin{algorithm}
+\summary (\emph{Write Block}). Writes the block buffer to disk\label{alg:writeBlock()}
+\Require buffer b
+\Ensure none
+\Statex
+\Procedure{WriteBlock}{b}
+\State initiate disk write
+\If{I/O synchronous}
+  \State \Call{Sleep}{until I/O complete}
+  \State \hyperref[alg:releaseBlock()]{\Call{ReleaseBlock}{b}}
+\ElsIf{buffer is marked for delayed write}
+  \State mark buffer to be put at head of free list
+\EndIf
+\EndProcedure\lastStep
+\end{algorithm}
+\end{comment}

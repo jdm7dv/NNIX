@@ -1,0 +1,140 @@
+%%
+%% basics.tex
+%% 
+%% Made by Alex Nelson
+%% Login   <alex@tomato>
+%% 
+%% Started on  Sat Sep  5 17:34:38 2009 Alex Nelson
+%% Last update Sat Sep  5 17:34:38 2009 Alex Nelson
+%%
+
+{\tt MMIX} is a 64-bit RISC machine with at least 256 general
+purpose registers and a 64 bit address space. Every instruction
+is four bytes long and has the form
+%\begin{figure}[H]
+\begin{center}
+\includegraphics{img/img.0}
+\end{center}
+%\end{figure}
+\noindent The 256 possible OP codes fall into about a dozen or so
+categories. Usually an instruction means ``Set the register X to
+be the result of Y OP Z.'' For some opcodes, it can combine Y and
+Z into YZ, or even combine all three into XYZ.
+
+The general categories of opcodes are:
+\begin{enumerate}
+\item loading and storing information to and from registers;
+\item adding or subtracting registers together;
+\item bit fiddling (operations like {\tt XOR} or {\tt AND});
+\item comparisons of registers;
+\item branches and jumps;
+\item multiplication and divison;
+\item floating point arithmetic;
+\item subroutine linkage;
+\item system considerations (dealing with parallel versions of
+  the architecture);
+\item interrupts, ``trips'' and ``traps'';
+\end{enumerate}
+We should consider a few things however.
+
+In C, we should consider the macro 
+\begin{Verbatim}
+const int i = 1;
+#define is_bigendian() ( (*(char*)&i) == 0 )
+\end{Verbatim}
+which tells us if the machine the {\tt MMIX}-VM (the virtual
+machine) is Big Endian or Little Endian. To translate from one to
+the other, consider the following methods
+\begin{Verbatim}
+short ShortSwap( short s )
+{
+  unsigned char b1, b2;
+  
+  b1 = s & 255;
+  b2 = (s >> 8) & 255;
+
+  return (b1 << 8) + b2;
+}
+short ShortNoSwap( short s )
+{
+  return s;
+}
+int LongSwap (int i)
+{
+  unsigned char b1, b2, b3, b4;
+
+  b1 = i & 255;
+  b2 = ( i >> 8 ) & 255;
+  b3 = ( i>>16 ) & 255;
+  b4 = ( i>>24 ) & 255;
+
+  return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+}
+
+int LongNoSwap( int i )
+{
+  return i;
+}
+float FloatSwap( float f )
+{
+  union
+  {
+    float f;
+    unsigned char b[4];
+  } dat1, dat2;
+
+  dat1.f = f;
+  dat2.b[0] = dat1.b[3];
+  dat2.b[1] = dat1.b[2];
+  dat2.b[2] = dat1.b[1];
+  dat2.b[3] = dat1.b[0];
+  return dat2.f;
+}
+
+float FloatNoSwap( float f )
+{
+  return f;
+}
+\end{Verbatim}
+We then consider the (global) function pointers
+\begin{Verbatim}
+/* endian.h */
+extern short (*BigShort) ( short s );
+extern short (*LittleShort) ( short s );
+extern int (*BigLong) ( int i );
+extern int (*LittleLong) ( int i );
+extern float (*BigFloat) ( float f );
+extern float (*LittleFloat) ( float f );
+\end{Verbatim}
+We initialize them in the following method
+\begin{Verbatim}
+void InitEndian( void )
+{
+  if( !is_bigendian())
+  {
+    //little endian
+    BigEndianSystem = false;
+
+    //set func pointers to correct funcs
+    BigShort = ShortSwap;
+    LittleShort = ShortNoSwap;
+    BigLong = LongSwap;
+    LittleLong = LongNoSwap;
+    BigFloat = FloatSwap;
+    LittleFloat = FloatNoSwap;
+  }
+  else
+  {
+    //big endian
+    BigEndianSystem = true;
+
+    BigShort = ShortNoSwap;
+    LittleShort = ShortSwap;
+    BigLong = LongNoSwap;
+    LittleLong = LongSwap;
+    BigFloat = FloatSwap;
+    LittleFloat = FloatNoSwap;
+  }
+}
+\end{Verbatim}
+For more on writing a virtual machine in C++ see\footnote{\url{http://www.gamedev.net/reference/articles/article1633.asp}}\footnote{\url{http://www.gamedev.net/reference/articles/article1686.asp}}\footnote{\url{http://www.gamedev.net/reference/articles/article1788.asp}}\footnote{\url{http://www.gamedev.net/reference/articles/article1803.asp}}\footnote{\url{http://www.gamedev.net/reference/articles/article1877.asp}}
